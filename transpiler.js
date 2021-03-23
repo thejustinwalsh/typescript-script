@@ -12,7 +12,7 @@
     };
 
     //Function loads each script and pushes its content into scripts.data
-    var load = function (url, compilerOptions) {
+    var load = function (url, index, compilerOptions) {
         var xhr = window.ActiveXObject ? new window.ActiveXObject('Microsoft.XMLHTTP') : new window.XMLHttpRequest();;
         xhr.open('GET', url, true);
         if ('overrideMimeType' in xhr) xhr.overrideMimeType('text/plain');
@@ -20,9 +20,9 @@
             if (xhr.readyState !== 4) return;
             if (xhr.status === 0 || xhr.status === 200) {
                 scripts.loaded++;
-                scripts.data.push(xhr.responseText);
-                scripts.name.push(url);
-                scripts.config.push(JSON.parse(compilerOptions || "{}"));
+                scripts.data[index] = xhr.responseText;
+                scripts.name[index] = url;
+                scripts.config[index] = JSON.parse(compilerOptions || "{}");
                 if (scripts.loaded === scripts.total) compile();
                 return xhr.responseText;
             } else {
@@ -81,11 +81,11 @@
             if (script[i].type == 'text/typescript') {
                 if (script[i].src) {
                     scripts.total++;
-                    load(script[i].src, script[i].dataset.compilerOptions);
+                    load(script[i].src, i, script[i].dataset.compilerOptions);
                 } else {
-                    scripts.data.push(script[i].innerHTML);
-                    scripts.name.push('innerHTML'+scripts.total);
-                    scripts.config.push(JSON.parse(script[i].dataset.compilerOptions || "{}"));
+                    scripts.data[i] = script[i].innerHTML;
+                    scripts.name[i] = 'innerHTML'+scripts.total;
+                    scripts.config[i] = JSON.parse(script[i].dataset.compilerOptions || "{}");
                     scripts.total++;
                     scripts.loaded++;
                 }
